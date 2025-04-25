@@ -2,8 +2,8 @@
   "name": "vue",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
+    "start": "nodemon index.js",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"

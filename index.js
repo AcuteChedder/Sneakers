@@ -7,8 +7,8 @@ app.listen(port, () => {
     console.log(`Сервер запущен: http://localhost:${port}`)
 });
 
-app.use(cors);
-app.use(express.json)
+app.use(cors());
+app.use(express.json())
 app.use(express.static('public'))
 
 let mongoose = require('mongoose')

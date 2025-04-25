@@ -1,9 +1,23 @@
 <script setup>
+  import { onMounted, ref } from "vue"
   import Header from "./components/Header.vue"
   import CardList from "./components/CardList.vue"
   import Drawer from "./components/Drawer.vue"
-
   
+  import axios from "axios"
+  axios.defaults.baseURL = "http://localhost:3000";
+
+  const products = ref([])
+
+  onMounted(async () => {
+    try {
+      const {data} = await axios.get('/products')
+      products.value = data
+    } catch(err) {
+      console.log(err)
+    }
+  })
+
 
 </script>
 
