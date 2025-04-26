@@ -23,6 +23,21 @@ let schema = new mongoose.Schema({
 let Products = mongoose.model('Products', schema);
 
 app.get('/products', async function(req, res) {
-    let data = await Products.find()
-    res.send(data)
+    const {sortBy} = req.query
+    let sortObj = {}
+
+    if(sortBy === 'price') {
+        sortObj.price = 1
+    } else if (sortBy === '-price') {
+        sortObj.price = -1
+    } else if(sortBy === 'title') {
+        sortObj = 1
+    }
+
+    try {
+        let data = await Products.find().sort(sortObj)
+        res.send(data)
+    } catch(err) {
+        console.error('Ошибка при получении продуктов:', err.message);   
+    }
 })
