@@ -1,5 +1,5 @@
 <script setup>
-  import { onMounted, ref, watch } from "vue"
+  import { computed, onMounted, ref, watch, provide } from "vue"
   import Header from "./components/Header.vue"
   import CardList from "./components/CardList.vue"
   import Drawer from "./components/Drawer.vue"
@@ -9,20 +9,44 @@
 
   const products = ref([])
   const sortBy = ref('')
-  const searchQuery = ref('')
+  const drawerOpen = ref(false)
+  const cart = ref([])
+
+  const closeDrawer = () => {
+    drawerOpen.value = false
+  }
+
+  const openDrawer = () => {
+    drawerOpen.value = true
+  }
 
   const onChangeSelect = (event) => {
     sortBy.value = event.target.value
   }
-  
-  onMounted(async () => {
+
+  const fetchItems = async () => {
     try {
       const {data} = await axios.get('/products')
       products.value = data
     } catch(err) {
       console.log(err)
     }
-  }) 
+  }
+
+  const addToCart = (product) => {
+    if(!product.isAdded) {
+      cart.value.push(product)
+      product.isAdded = true
+    } else {
+      cart.value.splice(cart.value.indexOf(product), 1)
+      product.isAdded = false
+    }
+
+    console.log(cart)
+  }
+
+  
+  onMounted(fetchItems)
 
   watch(sortBy, async () => {
     try {
@@ -37,12 +61,18 @@
     }
   })
 
+  provide('cart', {
+    cart,
+    closeDrawer,
+    openDrawer
+  })
+
 </script>
 
 <template>
-  <!-- <Drawer /> -->
+  <Drawer v-if="drawerOpen" />
   <div class=" bg-white w-4/5 m-auto rounded-xl shadow-xl mt-10">
-    <Header/>
+    <Header @open-drawer="openDrawer" />
 
     <div class="p-10">
       <div class="flex justify-between items-center">
@@ -63,7 +93,7 @@
 
       </div>
 
-      <CardList :products="products" />
+      <CardList :products="products" @add-to-cart="addToCart"/>
     </div>
 
   </div>
@@ -72,4 +102,3 @@
 <style scoped> 
 
 </style>
-
