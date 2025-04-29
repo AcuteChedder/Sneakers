@@ -12,6 +12,10 @@
   const drawerOpen = ref(false)
   const cart = ref([])
 
+
+  const totalPrice = computed(() => cart.value.reduce((acc, product) => acc + product.price, 0))
+  const vatPrice = computed(() => Math.round((totalPrice.value * 5) / 100))
+
   const closeDrawer = () => {
     drawerOpen.value = false
   }
@@ -34,12 +38,20 @@
   }
 
   const addToCart = (product) => {
+    cart.value.push(product)
+    product.isAdded = true
+  }
+
+  const removeFromCart = (product) => {
+    cart.value.splice(cart.value.indexOf(product), 1)
+    product.isAdded = false
+  }
+
+  const onClickAddPlus = (product) => {
     if(!product.isAdded) {
-      cart.value.push(product)
-      product.isAdded = true
+      addToCart(product)
     } else {
-      cart.value.splice(cart.value.indexOf(product), 1)
-      product.isAdded = false
+      removeFromCart(product)
     }
 
     console.log(cart)
@@ -64,15 +76,17 @@
   provide('cart', {
     cart,
     closeDrawer,
-    openDrawer
+    openDrawer,
+    addToCart,
+    removeFromCart
   })
 
 </script>
 
 <template>
-  <Drawer v-if="drawerOpen" />
+  <Drawer :total-price="totalPrice" :vatPrice="vatPrice" v-if="drawerOpen" />
   <div class=" bg-white w-4/5 m-auto rounded-xl shadow-xl mt-10">
-    <Header @open-drawer="openDrawer" />
+    <Header :total-price="totalPrice" @open-drawer="openDrawer" />
 
     <div class="p-10">
       <div class="flex justify-between items-center">
@@ -93,7 +107,7 @@
 
       </div>
 
-      <CardList :products="products" @add-to-cart="addToCart"/>
+      <CardList :products="products" @add-to-cart="onClickAddPlus"/>
     </div>
 
   </div>
