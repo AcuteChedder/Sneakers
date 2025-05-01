@@ -1,6 +1,7 @@
 <script setup>
     import DrawerHead from './DrawerHead.vue';
     import CartListItem from './CartListItem.vue';
+    import InfoBlock from './InfoBlock.vue';
 
     defineProps({
         totalPrice:  Number,
@@ -12,9 +13,17 @@
     <div class="fixed top-0 left-0 h-full w-full bg-black z-10 opacity-70"></div>
     <div class="bg-white w-96 h-full fixed right-0 top-0 z-20 p-8">
         <DrawerHead />
+
+        <div class="flex h-full items-center" v-if="!totalPrice">
+            <InfoBlock  
+            title="Корзина пустая" 
+            description="Добавьте хотя бы одну пару кроссовок, чтобы сделать заказ." 
+            imageUrl="/package-icon.png"/>
+        </div>
+
         <CartListItem />
 
-        <div class="flex flex-col gap-4 mt-7">
+        <div class="flex flex-col gap-4 mt-7" v-if="totalPrice">
             <div class="flex gap-2">
                 <span>Итого:</span>
                 <div class="flex-1 border-b border-dashed"></div>
